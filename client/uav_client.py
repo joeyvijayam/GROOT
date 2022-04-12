@@ -6,11 +6,13 @@ import websockets
 import json
 from common.messages import UavStatusMessage, SET_IFF_MSG_ID, KILL_MESSAGE_ID
 
-IP_ADDR = socket.gethostbyname(socket.gethostname()) # Temporary for testing on same laptop
+# Temporary for testing on same laptop
+IP_ADDR = socket.gethostbyname(socket.gethostname())
 # IP_ADDR = input("Enter the C2 IP address: ") # Enable for tactical ops
 HEARBEAT_STATUS_INTERVAL = 1
 
-uav_status = UavStatusMessage() # Current UAV status, for sending to C2
+uav_status = UavStatusMessage()  # Current UAV status, for sending to C2
+
 
 async def send_status(ws):
     """
@@ -24,6 +26,7 @@ async def send_status(ws):
 
     # Delay
     await asyncio.sleep(HEARBEAT_STATUS_INTERVAL)
+
 
 async def receive_messages(ws):
     """
@@ -44,7 +47,7 @@ async def receive_messages(ws):
             pass
     except:
         pass
-    
+
 
 async def main():
     """
