@@ -8,8 +8,8 @@ import tkinter as tk
 import multiprocessing
 import time
 import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parents[1]))
+# from pathlib import Path
+# sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from common.messages import UAV_STATUS_ID
 
@@ -31,7 +31,7 @@ class AreaOfOperationsWindow:
         self.root = tk.Toplevel()
         self.root.title("Area of Operations")
 
-        self.root.iconbitmap(".\\images\\defenzellc_logo.ico")
+        self.root.iconbitmap(".//images//defenzellc_logo.ico")
 
         self.canvas = tk.Canvas(self.root, height=700, width=700, bg="#263D42")
         self.canvas.pack()
@@ -40,7 +40,7 @@ class AreaOfOperationsWindow:
         self.frame.place(relwidth=0.8, relheight=0.6, relx=0.1, rely=0.1)
 
 
-        self.engagement_zones_image = tk.PhotoImage(file='.\\images\\engagement_zones_560x420.png')
+        self.engagement_zones_image = tk.PhotoImage(file='.//images//engagement_zones_560x420.png')
 
         self.engagement_zones_label = tk.Label(self.frame, image=self.engagement_zones_image)
         self.engagement_zones_label.pack(side=tk.BOTTOM)
@@ -111,7 +111,7 @@ class AreaOfOperationsWindow:
 
         # Whether or not to log to text file
         self.should_log = should_log
-        self.log = open("logs\\log_"+str(time.time())+".txt", "w+", encoding='UTF-8') if self.should_log else None
+        self.log = open("logs//log_"+str(time.time())+".txt", "w+", encoding='UTF-8') if self.should_log else None
 
     def resize_image(self, img, new_width, new_height):
         """

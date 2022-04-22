@@ -26,7 +26,7 @@ class UAVWindow:
         self.root = tk.Toplevel()
         self.root.title("UAV Operations")
 
-        self.root.iconbitmap(".\\images\\defenzellc_logo.ico")
+        self.root.iconbitmap(".//images//defenzellc_logo.ico")
 
         self.canvas = tk.Canvas(self.root, height=700, width=700, bg="#263D42")
         self.canvas.pack()
@@ -34,7 +34,7 @@ class UAVWindow:
         self.frame = tk.Frame(self.root, bg="white")
         self.frame.place(relwidth=0.8, relheight=0.6, relx=0.1, rely=0.1)
 
-        self.field_image = tk.PhotoImage(file='.\\images\\field_560x420.png')
+        self.field_image = tk.PhotoImage(file='.//images//field_560x420.png')
 
         self.field_label = tk.Label(self.frame, image=self.field_image)
         self.field_label.pack(side=tk.BOTTOM)

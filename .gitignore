@@ -1,0 +1,12 @@
+# Ignore venv
+venv/
+
+# Ignore __pycache__'es
+test_drivers_demo/__pycache__/
+server/__pycache__/
+gui/__pycache__/
+common/__pycache__/
+client/__pycache__/
+
+# Ignore logs
+logs/*.txt 
