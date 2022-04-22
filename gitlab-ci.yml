@@ -1,0 +1,25 @@
+include:
+  - remote: 'https://pipeline-catalog.global.lmco.com/api/v1/modules/stages/v1.0.2/templates/stages.gitlab-ci.yml'
+  - remote: 'https://pipeline-catalog.global.lmco.com/api/v1/global/modules/python/v2.2.79/modules/python-build.yml'
+  - remote: 'https://pipeline-catalog.global.lmco.com/api/v1/global/modules/python/v2.2.79/modules/test.yml'
+  - remote: 'https://pipeline-catalog.global.lmco.com/api/v1/global/modules/sast-scans/v2.4.0/pipelines/sast-full.gitlab-ci.yml'
+
+variables:
+  PYTHON_IMAGE: "registry.global.lmco.com/lmco-library/python"
+  PYTHON_TAG: "3.10-alpine"
+  PYTHON_APPLICATION_DIRECTORY: '.'
+  PYTHON_TEST_DIRECTORY: '.'
+  PYTHON_PYTEST_ARGS: ""
+  PYTHON_NOSE_ARGS: '-sx --with-xunit'
+  ENABLE_PYTEST: "true"
+  ENABLE_PYUNIT: "true"
+  ENABLE_NOSE: "true"
+  ENABLE_NOSE_COVERAGE: "true"
+  PIPENV_ARGS: "--system --deploy --dev"
+  ENABLE_PYTHON_BUILD: 'true'
+  ADDITIONAL_PATH: "test"              # Provide path where scan will start
+  ENFORCE_RELEASE_GATE: "security"    # Valid values: "all,security,codecoverage,duplicatelinedensity,maintainability,reliability"
+  MAIN_BRANCH: "master"               # Audit suppressions and remediated issues are inherited from MAIN_BRANCH. 
+  SCAN_RESULTS_REVIEWERS_NTIDS: "e393555, e409267"    # Comma separated list of NTIDs of employees who need to review scan results.
+  ENABLE_RESULTS_EMAIL: ""            # Valid values: "self,all,off". Default is "all".
+  FORTIFY_SKIP_TRANSLATION: "false"   # Valid values: "true,false". Default is "false".
