@@ -7,6 +7,10 @@
 import tkinter as tk
 import multiprocessing
 import time
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from common.messages import UAV_STATUS_ID
 
 from server.c2_server import C2Server

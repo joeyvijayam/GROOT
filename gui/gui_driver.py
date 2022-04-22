@@ -10,6 +10,10 @@ import multiprocessing
 import argparse
 import tkinter as tk
 
+# import sys
+# from pathlib import Path
+# sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from gui.area_of_operations_window import AreaOfOperationsWindow
 from gui.uav_window import UAVWindow
 
