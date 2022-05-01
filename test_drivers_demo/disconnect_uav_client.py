@@ -4,17 +4,25 @@
         Kill the UAV client
 """
 
-import websockets
 import socket
-from common.messages import NETWORK_PORT_NUMBER
 import asyncio
+import websockets
+
+from src.py.common.messages import NETWORK_PORT_NUMBER
 
 
-async def kill_uav_client(ip_addr, port_num):
-    async with websockets.connect(f"ws://{ip_addr}:{port_num}/websocket") as ws:
-        await ws.send("demo kill_uav_client")
+async def kill_uav_client(ip_address, port_num):
+    """
+    Description:
+        Test disconnect of UAV.
+    :param ip_address:
+        IP address of UAV client.
+    :param port_num:
+        Port number of UAV client.
+    """
+    async with websockets.connect(f"ws://{ip_address}:{port_num}/websocket") as websocket: # pylint: disable=no-member # NOTE: pylint can't figure out the connect method
+        await websocket.send("demo kill_uav_client")
 
 if __name__ == "__main__":
     ip_addr = socket.gethostbyname(socket.gethostname())
-    port_num = NETWORK_PORT_NUMBER
-    asyncio.run(kill_uav_client(ip_addr, port_num))
+    asyncio.run(kill_uav_client(ip_addr, NETWORK_PORT_NUMBER))
