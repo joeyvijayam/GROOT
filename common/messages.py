@@ -4,8 +4,8 @@
         This module implements messages and other shared network settings.
 """
 
-import json
-import time
+import datetime
+import jsons # type: ignore
 
 SET_IFF_MSG_ID = 1
 KILL_MESSAGE_ID = 2
@@ -13,6 +13,7 @@ FIRE_WEAPON_ID = 3
 UAV_STATUS_ID = 101
 GROUND_RADAR_STATUS_ID = 201
 NETWORK_PORT_NUMBER = 8000
+HEARTBEAT_STATUS_INTERVAL = 1
 
 class Message:
     """
@@ -25,8 +26,9 @@ class Message:
             Return class in JSON format for sending.
         """
         msg_dict = self.__dict__
-        msg_dict['timestamp'] = time.time()
-        return json.dumps(msg_dict)
+        now = datetime.datetime.now()
+        msg_dict['timestamp'] = '{:02d}/{:02d}/{:02d}-{:02d}:{:02d}:{:02d}'.format(now.year, now.month, now.day, now.hour, now.minute, now.second)
+        return jsons.dumps(msg_dict)
 
 class SetIffMessage(Message):
     """
@@ -104,7 +106,7 @@ class GroundRadarStatus(Message):
         Radar status message.
     """
 
-    def __init__(self, radar_data: RadarData, weapon_armed: bool = False):
+    def __init__(self, radar_data: RadarData = RadarData(), weapon_armed: bool = False):
         """
         Description:
             Create a radar status message.
