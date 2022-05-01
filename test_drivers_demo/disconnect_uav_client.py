@@ -8,7 +8,7 @@ import socket
 import asyncio
 import websockets
 
-from src.py.common.messages import NETWORK_PORT_NUMBER
+from common.messages import NETWORK_PORT_NUMBER
 
 
 async def kill_uav_client(ip_address, port_num):
