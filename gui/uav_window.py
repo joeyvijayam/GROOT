@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import LEFT, TOP
 import multiprocessing
 
-from client.uav_client import UAVClient
+from src.py.client.uav_client import UAVClient
 
 
 class UAVWindow:
@@ -26,7 +26,7 @@ class UAVWindow:
         self.root = tk.Toplevel()
         self.root.title("UAV Operations")
 
-        self.root.iconbitmap(".//images//defenzellc_logo.ico")
+        self.root.iconbitmap(".\\images\\defenzellc_logo.ico")
 
         self.canvas = tk.Canvas(self.root, height=700, width=700, bg="#263D42")
         self.canvas.pack()
@@ -34,7 +34,7 @@ class UAVWindow:
         self.frame = tk.Frame(self.root, bg="white")
         self.frame.place(relwidth=0.8, relheight=0.6, relx=0.1, rely=0.1)
 
-        self.field_image = tk.PhotoImage(file='.//images//field_560x420.png')
+        self.field_image = tk.PhotoImage(file='.\\images\\field_560x420.png')
 
         self.field_label = tk.Label(self.frame, image=self.field_image)
         self.field_label.pack(side=tk.BOTTOM)
@@ -60,12 +60,14 @@ class UAVWindow:
         self.root.resizable(False, False)
 
         # Create the UAV client ourselves, if demo on same computer
-        if demo:
+        self.demo = demo
+        self.send_and_receive_thread = None
+        if self.demo:
             # Create the UAV client
             self.uav_client = UAVClient(demo)
 
             # Create the network thread
-            self.send_and_receive_thread =multiprocessing.Process(target=self.uav_client.run_send_and_receive)
+            self.send_and_receive_thread = multiprocessing.Process(target=self.uav_client.run_send_and_receive)
 
             # Run the UAV client
             self.send_and_receive_thread.start()
@@ -105,8 +107,9 @@ class UAVWindow:
         Description:
             Close the tkinter window, end program.
         """
-        if not self.send_and_receive_thread.is_alive():
-            self.send_and_receive_thread.terminate()
+        if self.send_and_receive_thread is not None:
+            while self.send_and_receive_thread.is_alive():
+                self.send_and_receive_thread.terminate()
         self.root.destroy()
 
     def disconnect_uav_client_demo(self):
@@ -114,6 +117,7 @@ class UAVWindow:
         Description:
             Disconnect UAV client, for demo purposes.
         """
-        if self.send_and_receive_thread.is_alive():
+        while self.send_and_receive_thread.is_alive():
             print("UAV_WINDOW DEMO: Disconnected UAV Client", flush=True)
             self.send_and_receive_thread.terminate()
+
