@@ -8,12 +8,10 @@ import tkinter as tk
 import multiprocessing
 import time
 import sys
-# from pathlib import Path
-# sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from common.messages import UAV_STATUS_ID
-
-from server.c2_server import C2Server
+from src.py.common.messages import UAV_STATUS_ID, GROUND_RADAR_STATUS_ID, UavStatusMessage, GroundRadarStatus
+from src.py.server.c2_server import C2Server
+from src.py.client.radar_client import RadarClient
 
 
 class AreaOfOperationsWindow:
@@ -31,7 +29,7 @@ class AreaOfOperationsWindow:
         self.root = tk.Toplevel()
         self.root.title("Area of Operations")
 
-        self.root.iconbitmap(".//images//defenzellc_logo.ico")
+        self.root.iconbitmap(".\\images\\defenzellc_logo.ico")
 
         self.canvas = tk.Canvas(self.root, height=700, width=700, bg="#263D42")
         self.canvas.pack()
@@ -40,7 +38,7 @@ class AreaOfOperationsWindow:
         self.frame.place(relwidth=0.8, relheight=0.6, relx=0.1, rely=0.1)
 
 
-        self.engagement_zones_image = tk.PhotoImage(file='.//images//engagement_zones_560x420.png')
+        self.engagement_zones_image = tk.PhotoImage(file='.\\images\\engagement_zones_560x420.png')
 
         self.engagement_zones_label = tk.Label(self.frame, image=self.engagement_zones_image)
         self.engagement_zones_label.pack(side=tk.BOTTOM)
@@ -60,6 +58,8 @@ class AreaOfOperationsWindow:
             background='white',
             text="")
         self.telemetry_label.pack(side=tk.TOP, anchor=tk.NW)
+        self.telemetry_label.bind('<Configure>', lambda e: self.telemetry_label.config(wraplength=(700*.8)))
+
 
         self.radar_status_string = "Radar Status:    "
         self.radar_status = self.create_label(self.radar_status_string)
@@ -86,14 +86,23 @@ class AreaOfOperationsWindow:
         self.server_queue = server_queue
         self.gui_queue = gui_queue
 
-        # Create the C2 server
+        ### Create the C2 server
         self.c2_server = C2Server(self.server_queue, self.gui_queue)
 
         # Create the network thread
         self.c2_server_thread = multiprocessing.Process(target=self.c2_server.run_server)
 
-        # Run the UAV client
+        # Run the C2 server thread
         self.c2_server_thread.start()
+
+        ### Create the Ground Radar client
+        self.radar_client = RadarClient()
+
+        # Create the network thread
+        self.radar_client_thread = multiprocessing.Process(target=self.radar_client.run_send_and_receive)
+
+        # Run the radar client thread
+        self.radar_client_thread.start()
 
         # Create end thread condition, on window close
         self.root.protocol('wm_delete_window', self.end_window)
@@ -111,7 +120,8 @@ class AreaOfOperationsWindow:
 
         # Whether or not to log to text file
         self.should_log = should_log
-        self.log = open("logs//log_"+str(time.time())+".txt", "w+", encoding='UTF-8') if self.should_log else None
+        self.log = open("logs\\log_"+str(time.time())+".txt", "w+", encoding='UTF-8') if self.should_log else None
+        self.log_closed = True if self.log == None else False
 
     def resize_image(self, img, new_width, new_height):
         """
@@ -175,8 +185,22 @@ class AreaOfOperationsWindow:
         Description:
             Close the tkinter window, end program.
         """
-        self.c2_server_thread.terminate()
-        self.log.close()
+        while self.c2_server_thread.is_alive():
+            self.c2_server_thread.terminate()
+        while self.radar_client_thread.is_alive():
+            self.radar_client_thread.terminate()
+        self.uav_window.end_window()
+        self.close_log()
+        sys.exit(0)
+
+    def close_log(self):
+        """
+        Description:
+            Close telemetry text log.
+        """
+        if not self.log_closed:
+            self.log.close()
+            self.log_closed = True
 
     def monitor_server_queue(self):
         """
@@ -188,10 +212,11 @@ class AreaOfOperationsWindow:
             # Get message from the queue
             message_queue_item = self.server_queue.get(0)
 
+            print(message_queue_item)
+
             # Log to text file, if needed
             if self.should_log:
                 self.log.write(str(message_queue_item) + "\n")
-            
 
             # Check for Demo communications
             if str(message_queue_item).split(' ', maxsplit=1)[0] == "demo":
@@ -213,7 +238,10 @@ class AreaOfOperationsWindow:
                     self.uav_window.uav_status.config(text="UAV Status: Connected", fg="green")
                     self.uav_window.uav_status_connected = True
 
-            self.uav_connected_time_watchdog = 0
+                self.uav_connected_time_watchdog = 0
+            elif message_type == GROUND_RADAR_STATUS_ID:
+                # Update Radar windows
+                pass
             self.root.after(100, self.monitor_server_queue)
         except Exception:
             self.root.after(100, self.monitor_server_queue)
