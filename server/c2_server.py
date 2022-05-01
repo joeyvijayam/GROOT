@@ -9,8 +9,7 @@ import socket
 import json
 import websockets
 
-
-from common.messages import GROUND_RADAR_STATUS_ID, UAV_STATUS_ID, NETWORK_PORT_NUMBER
+from src.py.common.messages import GROUND_RADAR_STATUS_ID, UAV_STATUS_ID, NETWORK_PORT_NUMBER
 
 class C2Server:
     """
