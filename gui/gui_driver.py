@@ -10,12 +10,8 @@ import multiprocessing
 import argparse
 import tkinter as tk
 
-# import sys
-# from pathlib import Path
-# sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from gui.area_of_operations_window import AreaOfOperationsWindow
-from gui.uav_window import UAVWindow
+from src.py.gui.area_of_operations_window import AreaOfOperationsWindow
+from src.py.gui.uav_window import UAVWindow
 
 
 class GUIDriver:
@@ -58,8 +54,8 @@ class GUIDriver:
             Do things when user quits, if needed.
         """
         print("Ctrl-C pressed")
+        self.area_of_ops_win.end_window()
         sys.exit(0)
-
 
 if __name__ == '__main__':
     gui_driver = GUIDriver()
