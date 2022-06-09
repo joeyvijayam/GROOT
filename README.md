@@ -1,6 +1,6 @@
 # GROOT
 
-Project Development for GROOT System.
+Project Development for GROOT System (preliminary).
 
 
 ## Run the GUIs and C2 Server / UAV Client 
